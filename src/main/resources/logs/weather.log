@@ -61,3 +61,12 @@
 01:24:36.908 [JavaFX Application Thread] INFO  o.e.w.View.WeatherViewController - Загружена информация о погоде для города: Kemerovo RU
 01:24:49.687 [JavaFX Application Thread] INFO  o.e.w.View.WeatherViewController - Загружена информация о погоде для города: Kemerovo RU
 01:24:58.971 [JavaFX Application Thread] INFO  o.e.w.View.WeatherViewController - Загружена информация о погоде для города: Sosal PK
+00:21:50.538 [JavaFX Application Thread] INFO  o.e.w.View.WeatherViewController - Загружена информация о погоде для города: Sosal PK
+00:22:36.042 [JavaFX Application Thread] INFO  o.e.w.View.WeatherViewController - Загружена информация о погоде для города: Sosal PK
+00:24:35.148 [JavaFX Application Thread] INFO  o.e.w.View.WeatherViewController - Загружена информация о погоде для города: Sosal PK
+00:26:33.248 [JavaFX Application Thread] INFO  o.e.w.View.WeatherViewController - Загружена информация о погоде для города: Sosal PK
+00:26:59.771 [JavaFX Application Thread] INFO  o.e.w.View.WeatherViewController - Загружена информация о погоде для города: Kemerovo RU
+00:28:41.177 [JavaFX Application Thread] INFO  o.e.w.View.WeatherViewController - Загружена информация о погоде для города: Kemerovo RU
+00:29:51.682 [JavaFX Application Thread] INFO  o.e.w.View.WeatherViewController - Загружена информация о погоде для города: Kemerovo RU
+00:30:24.957 [JavaFX Application Thread] INFO  o.e.w.View.WeatherViewController - Загружена информация о погоде для города: Производство и продажба на яйца СД Марвас-90-Френкеви с-ие BG
+00:30:36.025 [JavaFX Application Thread] INFO  o.e.w.View.WeatherViewController - Загружена информация о погоде для города: Kemerovo RU

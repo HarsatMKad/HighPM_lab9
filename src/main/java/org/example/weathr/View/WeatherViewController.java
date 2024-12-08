@@ -98,49 +98,54 @@ public class WeatherViewController implements Initializable {
 
     private HBox loadWeather(double lat, double lon, String sityName, String sityCountry) throws IOException {
         ParseWeather pw = new ParseWeather();
-        List<WeatherData> weathers = pw.parseWeatherForecast(lat, lon);
-        tempLable.setText("Температура: " + weathers.getFirst().getTemp() + "°C");
-        feelsLikeLable.setText("По ощущениям: " + weathers.getFirst().getFeelsLike() + "°C");
-        tempMinLable.setText("Мин. температура: " + weathers.getFirst().getTempMin() + "°C");
-        tempMaxLable.setText("Макс. температура: " + weathers.getFirst().getTempMax() + "°C");
-        humidityLable.setText("Влажность: " + weathers.getFirst().getHumidity() + "%");
-        pressureLable.setText("Давление: " + weathers.getFirst().getPressure());
-        windLable.setText(weathers.getFirst().getDeg() + " ветер " + weathers.getFirst().getWindSpeed() + " м/с");
-        visibilityLable.setText("Видимость: " + ((int) weathers.getFirst().getVisibility()) + " км");
+        WeatherData weathers = pw.getCurrentWeather(lat, lon);
+        tempLable.setText("Температура: " + weathers.getTemp() + "°C");
+        feelsLikeLable.setText("По ощущениям: " + weathers.getFeelsLike() + "°C");
+        tempMinLable.setText("Мин. температура: " + weathers.getTempMin() + "°C");
+        tempMaxLable.setText("Макс. температура: " + weathers.getTempMax() + "°C");
+        humidityLable.setText("Влажность: " + weathers.getHumidity() + "%");
+        pressureLable.setText("Давление: " + weathers.getPressure());
+        windLable.setText(weathers.getDeg() + " ветер " + weathers.getWindSpeed() + " м/с");
+        visibilityLable.setText("Видимость: " + ((int) weathers.getVisibility()) + " км");
 
-        if (weathers.getFirst().getRain() != null && weathers.getFirst().getClouds() != null) {
-            PrecipitationLable.setText("Осадки: Дождь:" + weathers.getFirst().getRain().getH1() + " мм/ч Снег:" + weathers.get(0).getClouds().getAll());
+        if (weathers.getRain() != null && weathers.getClouds() != null) {
+            PrecipitationLable.setText("Осадки: Дождь:" + weathers.getRain().getH1() + " мм/ч Снег:" + weathers.getClouds().getAll());
         }
-        if (weathers.getFirst().getRain() != null) {
-            PrecipitationLable.setText("Осадки: Дождь:" + weathers.getFirst().getRain().getH1() + " мм/ч");
+        if (weathers.getRain() != null) {
+            PrecipitationLable.setText("Осадки: Дождь:" + weathers.getRain().getH1() + " мм/ч");
         }
-        if (weathers.getFirst().getClouds() != null) {
-            PrecipitationLable.setText("Осадки: Снег: " + weathers.getFirst().getClouds().getAll() + " мм/ч");
+        if (weathers.getClouds() != null) {
+            PrecipitationLable.setText("Осадки: Снег: " + weathers.getClouds().getAll() + " мм/ч");
         }
 
         sityLable.setText(sityName + " " + sityCountry);
         sityLable.setVisible(true);
-        mainIconView.setImage(new Image("https://openweathermap.org/img/wn/" + weathers.get(0).getIcon() + "@2x.png"));
+        mainIconView.setImage(new Image("https://openweathermap.org/img/wn/" + weathers.getIcon() + "@2x.png"));
 
         HBox hb = new HBox();
-        List<WeatherData> weatherDataShortList = pw.parseWeatherForecast(lat, lon);
+        List<WeatherData> weatherDataShortList = pw.getWeatherForecast(lat, lon);
 
         for (int i = 1; i < weatherDataShortList.size(); i++) {
-            Label date = new Label("Дата: " + weatherDataShortList.get(i).getDate().substring(0, 10));
-            Label status = new Label(weatherDataShortList.get(i).getStatus());
-            Image icon = new Image("https://openweathermap.org/img/wn/" + weathers.get(i).getIcon() + "@2x.png");
-            ImageView iconView = new ImageView(icon);
-            iconView.setFitHeight(40);
-            iconView.setFitWidth(40);
-            Label avgTemp = new Label("Средняя температура: " + weatherDataShortList.get(i).getTemp());
-            Label minTemp = new Label("Минимальная температура: " + weatherDataShortList.get(i).getTempMin());
-            Label maxTemp = new Label("Максимальная температура: " + weatherDataShortList.get(i).getTempMax());
-            VBox wdsvb = new VBox(date, status, iconView, avgTemp, minTemp, maxTemp);
-            wdsvb.setPadding(new Insets(0, 10, 0, 10));
-            wdsvb.setStyle("-fx-background-color: #bbbbbb;");
+            VBox wdsvb = getForecastWeatherBox(weatherDataShortList, i);
             hb.getChildren().add(wdsvb);
         }
         logger.info("Загружена информация о погоде для города: {} {}", sityName, sityCountry);
         return hb;
+    }
+
+    private static VBox getForecastWeatherBox(List<WeatherData> weatherDataShortList, int i) {
+        Label date = new Label("Дата: " + weatherDataShortList.get(i).getDate().substring(0, 10));
+        Label status = new Label(weatherDataShortList.get(i).getStatus());
+        Image icon = new Image("https://openweathermap.org/img/wn/" + weatherDataShortList.get(i).getIcon() + "@2x.png");
+        ImageView iconView = new ImageView(icon);
+        iconView.setFitHeight(40);
+        iconView.setFitWidth(40);
+        Label avgTemp = new Label("Средняя температура: " + weatherDataShortList.get(i).getTemp());
+        Label minTemp = new Label("Минимальная температура: " + weatherDataShortList.get(i).getTempMin());
+        Label maxTemp = new Label("Максимальная температура: " + weatherDataShortList.get(i).getTempMax());
+        VBox wdsvb = new VBox(date, status, iconView, avgTemp, minTemp, maxTemp);
+        wdsvb.setPadding(new Insets(0, 10, 0, 10));
+        wdsvb.setStyle("-fx-background-color: #bbbbbb;");
+        return wdsvb;
     }
 }

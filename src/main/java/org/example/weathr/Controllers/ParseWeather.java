@@ -14,7 +14,7 @@ import java.util.List;
 
 
 public class ParseWeather {
-    public List<WeatherData> parseWeatherForecast(double lat, double lon) throws IOException {
+    public List<WeatherData> getWeatherForecast(double lat, double lon) throws IOException {
         String myKey = "fa74a383f4eccf4d88a8f0397bbab87b";
         String urlString = "https://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&units=metric&appid=" + myKey;
         URL url = new URL(urlString);
@@ -34,7 +34,7 @@ public class ParseWeather {
             reader.close();
 
             JSONObject jsonObject = new JSONObject(response.toString());
-            weather = convertWeather(jsonObject);
+            weather = convertWeatherAsList(jsonObject);
         } else {
             throw new RetrivingException("Error while retrieving data: " + responseCode);
         }
@@ -42,12 +42,40 @@ public class ParseWeather {
         return weather;
     }
 
-    private static List<WeatherData> convertWeather(JSONObject jsonObject) {
+    public WeatherData getCurrentWeather(double lat, double lon) throws IOException {
+        String myKey = "fa74a383f4eccf4d88a8f0397bbab87b";
+        String urlString = "https://api.openweathermap.org/data/2.5/weather?lat="+ lat + "&lon=" + lon + "&units=metric&appid=" + myKey;
+        URL url = new URL(urlString);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+
+        WeatherData weather;
+        int responseCode = connection.getResponseCode();
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+            StringBuilder response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line).append("\n");
+            }
+            reader.close();
+
+            JSONObject jsonObject = new JSONObject(response.toString());
+            weather = convertWeatherFromJson(jsonObject);
+        } else {
+            throw new RetrivingException("Error while retrieving data: " + responseCode);
+        }
+        connection.disconnect();
+        return weather;
+    }
+
+    private static List<WeatherData> convertWeatherAsList(JSONObject jsonObject) {
         List<WeatherData> weathers = new ArrayList<>();
         JSONArray weatherArray = jsonObject.getJSONArray("list");
 
         for (int i = 0; i < weatherArray.length(); i++) {
-            WeatherData weatherShort = convertArrayWeather(weatherArray.getJSONObject(i));
+            WeatherData weatherShort = convertWeatherFromJson(weatherArray.getJSONObject(i));
             try {
                 int dateTime = Integer.parseInt(weatherShort.getDate().substring(11, 13));
                 if(dateTime == 12){
@@ -60,8 +88,14 @@ public class ParseWeather {
         return weathers;
     }
 
-    private static WeatherData convertArrayWeather(JSONObject jsonObject) {
-        String date = jsonObject.getString("dt_txt");
+    private static WeatherData convertWeatherFromJson(JSONObject jsonObject) {
+        String date;
+        if(jsonObject.has("dt_txt")){
+            date = jsonObject.getString("dt_txt");
+        } else {
+            date = String.valueOf(jsonObject.getInt("dt"));
+        }
+
         String main = jsonObject.getJSONArray("weather").getJSONObject(0).getString("main");
         String description = jsonObject.getJSONArray("weather").getJSONObject(0).getString("description");
         String icon = jsonObject.getJSONArray("weather").getJSONObject(0).getString("icon");
